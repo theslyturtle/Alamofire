@@ -144,7 +144,7 @@ open class MultipartFormData {
     ///   - name:     Name to associate with the `Data` in the `Content-Disposition` HTTP header.
     ///   - fileName: Filename to associate with the `Data` in the `Content-Disposition` HTTP header.
     ///   - mimeType: MIME type to associate with the data in the `Content-Type` HTTP header.
-    public func append(_ data: Data, withName name: String, fileName: String? = nil, mimeType: String? = nil) {
+    public func append(_ data: Data, withName name: String? = nil, fileName: String? = nil, mimeType: String? = nil) {
         let headers = contentHeaders(withName: name, fileName: fileName, mimeType: mimeType)
         let stream = InputStream(data: data)
         let length = UInt64(data.count)
@@ -511,8 +511,9 @@ open class MultipartFormData {
 
     // MARK: - Private - Content Headers
 
-    private func contentHeaders(withName name: String, fileName: String? = nil, mimeType: String? = nil) -> HTTPHeaders {
-        var disposition = "form-data; name=\"\(name)\""
+    private func contentHeaders(withName name: String? = nil, fileName: String? = nil, mimeType: String? = nil) -> HTTPHeaders {
+        var disposition = ""
+        if let name = name {disposition += "form-data; name=\"\(name)\""}
         if let fileName = fileName { disposition += "; filename=\"\(fileName)\"" }
 
         var headers: HTTPHeaders = [.contentDisposition(disposition)]
